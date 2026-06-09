@@ -1,0 +1,1569 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="icon" type="image/png" href="LOGO POLE.png" />
+  <title>Pole Artistry Studio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;0,700;1,300;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --black:       #0A0A0F;
+      --deep:        #12101A;
+      --surface:     #1A1826;
+      --surface2:    #221F32;
+      --rose:        #C8506A;
+      --rose-light:  #E8718A;
+      --rose-dark:   #9A3050;
+      --gold:        #D4A96A;
+      --gold-light:  #F0C98A;
+      --gold-dim:    #8A6A3A;
+      --lavender:    #9B8EC4;
+      --lav-light:   #C4B8E8;
+      --cream:       #FAF4EE;
+      --muted:       #8A8298;
+      --white:       #FFFFFF;
+    }
+ 
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--black);
+      color: var(--cream);
+      overflow-x: hidden;
+    }
+
+    /* ── CURSOR ─────────────────────────────────── */
+    .cursor {
+      position: fixed; top: 0; left: 0; z-index: 9999;
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--rose); pointer-events: none;
+      transform: translate(-50%,-50%);
+      transition: transform 0.1s, width 0.3s, height 0.3s, background 0.3s;
+    }
+    .cursor-ring {
+      position: fixed; top: 0; left: 0; z-index: 9998;
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 1.5px solid rgba(200,80,106,0.5);
+      pointer-events: none;
+      transform: translate(-50%,-50%);
+      transition: transform 0.18s ease, width 0.3s, height 0.3s;
+    }
+    body:hover .cursor { opacity: 1; }
+
+    /* ── NAV ─────────────────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 6%; height: 72px;
+      transition: all 0.4s;
+    }
+    nav.scrolled {
+      background: rgba(10,10,15,0.92);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(212,169,106,0.15);
+      height: 60px;
+    }
+
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem; font-weight: 600;
+      color: var(--cream); text-decoration: none;
+      letter-spacing: 0.05em;
+    }
+    .nav-logo span { color: var(--rose); font-style: italic; }
+
+    .nav-links { display: flex; gap: 2.2rem; list-style: none; }
+    .nav-links a {
+      color: rgba(250,244,238,0.65);
+      text-decoration: none; font-size: 0.82rem;
+      font-weight: 500; letter-spacing: 0.12em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--gold-light); }
+
+    .nav-cta {
+      background: linear-gradient(135deg, var(--rose), var(--rose-dark));
+      color: var(--white) !important;
+      padding: 0.5rem 1.3rem; border-radius: 100px;
+      font-size: 0.8rem !important; font-weight: 600 !important;
+      letter-spacing: 0.08em !important;
+      box-shadow: 0 4px 20px rgba(200,80,106,0.35);
+      transition: box-shadow 0.2s, transform 0.2s !important;
+    }
+    .nav-cta:hover {
+      box-shadow: 0 6px 28px rgba(200,80,106,0.6) !important;
+      transform: translateY(-1px);
+      color: var(--white) !important;
+    }
+
+    /* Hamburger */
+    .hamburger {
+      display: none; flex-direction: column; gap: 5px;
+      cursor: pointer; padding: 4px;
+    }
+    .hamburger span {
+      display: block; width: 24px; height: 1.5px;
+      background: var(--cream); border-radius: 2px; transition: all 0.3s;
+    }
+    .hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+    .mobile-menu {
+      display: none; position: fixed; top: 60px; left: 0; right: 0;
+      background: rgba(10,10,15,0.97); backdrop-filter: blur(20px);
+      padding: 1.5rem 6%; z-index: 99; flex-direction: column; gap: 0;
+      border-bottom: 1px solid rgba(212,169,106,0.15);
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      color: rgba(250,244,238,0.8); text-decoration: none;
+      font-size: 0.95rem; font-weight: 500; padding: 0.9rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      letter-spacing: 0.05em; transition: color 0.2s;
+    }
+    .mobile-menu a:hover { color: var(--rose-light); }
+
+    /* ── HERO ─────────────────────────────────────── */
+    #hero {
+      min-height: 100vh;
+      display: grid; grid-template-columns: 1fr 1fr;
+      position: relative; overflow: hidden;
+    }
+
+    .hero-left {
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 10rem 6% 6rem;
+      position: relative; z-index: 2;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      font-size: 0.7rem; letter-spacing: 0.35em; text-transform: uppercase;
+      color: var(--gold); font-weight: 600; margin-bottom: 2rem;
+    }
+    .hero-eyebrow::before {
+      content: ''; display: block;
+      width: 30px; height: 1px; background: var(--gold);
+    }
+
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(3rem, 6vw, 5.5rem);
+      font-weight: 700; line-height: 1.0;
+      color: var(--cream); margin-bottom: 1.5rem;
+    }
+    .hero-title em {
+      display: block; font-style: italic;
+      color: var(--rose-light);
+    }
+    .hero-title .outline {
+      -webkit-text-stroke: 1px rgba(250,244,238,0.35);
+      color: transparent; display: block;
+    }
+
+    .hero-desc {
+      font-size: 1rem; line-height: 1.75;
+      color: var(--muted); max-width: 400px; margin-bottom: 2.5rem;
+    }
+
+    .hero-buttons {
+      display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 3rem;
+    }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.85rem 1.8rem; border-radius: 100px;
+      font-size: 0.85rem; font-weight: 600; letter-spacing: 0.06em;
+      text-decoration: none; cursor: pointer; border: none;
+      font-family: 'Outfit', sans-serif; transition: all 0.25s;
+    }
+    .btn-rose {
+      background: linear-gradient(135deg, var(--rose), var(--rose-dark));
+      color: var(--white);
+      box-shadow: 0 8px 30px rgba(200,80,106,0.4);
+    }
+    .btn-rose:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 14px 40px rgba(200,80,106,0.55);
+    }
+    .btn-ghost {
+      background: transparent; color: var(--cream);
+      border: 1px solid rgba(250,244,238,0.25);
+    }
+    .btn-ghost:hover {
+      border-color: var(--gold); color: var(--gold);
+      transform: translateY(-3px);
+    }
+    .btn-gold {
+      background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+      color: var(--black);
+    }
+    .btn-gold:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(212,169,106,0.4);
+    }
+
+    .hero-stats {
+      display: flex; gap: 2rem; flex-wrap: wrap;
+    }
+    .stat { border-left: 1px solid rgba(212,169,106,0.3); padding-left: 1.2rem; }
+    .stat-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem; font-weight: 700; color: var(--gold);
+      line-height: 1;
+    }
+    .stat-label { font-size: 0.72rem; color: var(--muted); letter-spacing: 0.1em; margin-top: 0.25rem; }
+
+    /* Hero visual */
+    .hero-right {
+      position: relative; overflow: hidden;
+    }
+    .hero-visual {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse at 30% 40%, rgba(200,80,106,0.25) 0%, transparent 55%),
+        radial-gradient(ellipse at 80% 80%, rgba(155,142,196,0.2) 0%, transparent 50%),
+        radial-gradient(ellipse at 60% 10%, rgba(212,169,106,0.15) 0%, transparent 45%),
+        linear-gradient(160deg, #1A1826, #0A0A0F);
+    }
+
+    /* Hero image */
+    .hero-img-wrap {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .hero-illustration {
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center top;
+      opacity: 0.85;
+      mask-image: linear-gradient(to left, rgba(0,0,0,0.95) 40%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,0.95) 40%, transparent 100%);
+    }
+    .hero-img-credit {
+      position: absolute; bottom: 1rem; right: 1.5rem;
+      font-size: 0.65rem; color: rgba(250,244,238,0.35);
+      letter-spacing: 0.1em;
+    }
+
+    /* Floating orbs */
+    .orb {
+      position: absolute; border-radius: 50%;
+      animation: orbFloat 6s ease-in-out infinite alternate;
+    }
+    .orb-1 {
+      width: 180px; height: 180px; top: 5%; right: 5%;
+      background: radial-gradient(circle, rgba(200,80,106,0.18), transparent 70%);
+      animation-delay: 0s;
+    }
+    .orb-2 {
+      width: 120px; height: 120px; bottom: 15%; left: 8%;
+      background: radial-gradient(circle, rgba(155,142,196,0.2), transparent 70%);
+      animation-delay: -2s;
+    }
+    .orb-3 {
+      width: 80px; height: 80px; top: 55%; right: 12%;
+      background: radial-gradient(circle, rgba(212,169,106,0.2), transparent 70%);
+      animation-delay: -4s;
+    }
+    @keyframes orbFloat {
+      from { transform: translateY(0) scale(1); }
+      to { transform: translateY(-20px) scale(1.1); }
+    }
+
+    .hero-scroll-hint {
+      position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+      color: var(--muted); font-size: 0.65rem; letter-spacing: 0.25em;
+      text-transform: uppercase; z-index: 2;
+    }
+    .scroll-dot {
+      width: 1px; height: 50px;
+      background: linear-gradient(to bottom, rgba(212,169,106,0.6), transparent);
+      animation: dotPulse 2s ease infinite;
+    }
+    @keyframes dotPulse { 0%,100%{opacity:.4} 50%{opacity:1} }
+
+    /* ── SECTION COMMONS ─────────────────────────── */
+    .section-label {
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      font-size: 0.68rem; letter-spacing: 0.35em; text-transform: uppercase;
+      color: var(--gold); font-weight: 600; margin-bottom: 1rem;
+    }
+    .section-label::before {
+      content: ''; display: block; width: 24px; height: 1px; background: var(--gold);
+    }
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.2rem, 5vw, 3.8rem);
+      font-weight: 700; line-height: 1.1; margin-bottom: 1.25rem;
+    }
+    .section-title em { font-style: italic; color: var(--rose-light); }
+    section { padding: 6rem 6%; }
+
+    /* ── BENEFITS ─────────────────────────────────── */
+    #beneficios { background: var(--deep); }
+
+    .benefits-intro {
+      max-width: 560px; margin-bottom: 4rem;
+    }
+    .benefits-intro p {
+      color: var(--muted); font-size: 1rem; line-height: 1.75;
+    }
+
+    .benefits-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.5rem;
+    }
+    .benefit-card {
+      background: var(--surface);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 16px; padding: 2rem;
+      position: relative; overflow: hidden;
+      transition: all 0.35s;
+    }
+    .benefit-card::before {
+      content: ''; position: absolute;
+      top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(to right, var(--rose), var(--lavender));
+      transform: scaleX(0); transition: transform 0.35s;
+    }
+    .benefit-card:hover { border-color: rgba(200,80,106,0.25); transform: translateY(-6px); }
+    .benefit-card:hover::before { transform: scaleX(1); }
+
+    .benefit-icon {
+      font-size: 2.2rem; margin-bottom: 1.25rem;
+      display: block;
+    }
+    .benefit-icon-img {
+      width: 72px !important;
+      height: 90px !important;
+      border-radius: 16px !important;
+      overflow: hidden;
+      padding: 6px;
+    }
+    .benefit-icon-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    .benefit-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.35rem; font-weight: 600;
+      color: var(--cream); margin-bottom: 0.6rem;
+    }
+    .benefit-desc {
+      font-size: 0.85rem; color: var(--muted); line-height: 1.7;
+    }
+
+    /* ── CLASES ──────────────────────────────────── */
+    #clases { background: var(--black); }
+
+    .clases-header {
+      display: flex; align-items: flex-end;
+      justify-content: space-between; flex-wrap: wrap;
+      gap: 2rem; margin-bottom: 3.5rem;
+    }
+
+    .clases-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .clase-card {
+      border-radius: 20px; overflow: hidden;
+      position: relative; cursor: pointer;
+      transition: transform 0.35s;
+    }
+    .clase-card:hover { transform: scale(1.02); }
+
+    .clase-visual {
+      height: 240px; position: relative;
+      display: flex; align-items: flex-end;
+    }
+    .clase-visual.beginner {
+      background: linear-gradient(160deg, #1A1530 0%, #2D1040 60%, #4A1A5A 100%);
+    }
+    .clase-visual.intermediate {
+      background: linear-gradient(160deg, #1A0A18 0%, #3D0E30 60%, #6A1845 100%);
+    }
+    .clase-visual.advanced {
+      background: linear-gradient(160deg, #0A1020 0%, #1A2040 60%, #1A3060 100%);
+    }
+    .clase-visual.fitness {
+      background: linear-gradient(160deg, #0A180A 0%, #1A3020 60%, #1A5030 100%);
+    }
+    .clase-visual.artistic {
+      background: linear-gradient(160deg, #200A10 0%, #401020 60%, #601840 100%);
+    }
+    .clase-visual.kids {
+      background: linear-gradient(160deg, #1A1000 0%, #3A2800 60%, #5A3800 100%);
+    }
+
+    .clase-visual-bg {
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at center 40%, rgba(200,80,106,0.2), transparent 65%);
+    }
+    .clase-visual-icon {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%,-55%);
+      font-size: 3.5rem; opacity: 0.8;
+    }
+    .clase-level {
+      position: absolute; top: 1rem; right: 1rem;
+      padding: 0.3rem 0.8rem; border-radius: 100px;
+      font-size: 0.65rem; font-weight: 600; letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .level-inicio { background: rgba(212,169,106,0.2); color: var(--gold-light); }
+    .level-medio  { background: rgba(200,80,106,0.2); color: var(--rose-light); }
+    .level-avanz  { background: rgba(155,142,196,0.2); color: var(--lav-light); }
+
+    .clase-body {
+      background: var(--surface); padding: 1.5rem;
+    }
+    .clase-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem; font-weight: 700;
+      color: var(--cream); margin-bottom: 0.4rem;
+    }
+    .clase-desc {
+      font-size: 0.82rem; color: var(--muted);
+      line-height: 1.6; margin-bottom: 1rem;
+    }
+    .clase-meta {
+      display: flex; gap: 1rem; flex-wrap: wrap;
+    }
+    .meta-chip {
+      font-size: 0.72rem; color: var(--muted);
+      display: flex; align-items: center; gap: 0.3rem;
+    }
+
+    /* ── PRECIOS ─────────────────────────────────── */
+    #precios { background: var(--deep); }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem; margin-top: 3rem;
+    }
+
+    .price-card {
+      background: var(--surface);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 20px; padding: 2.5rem 2rem;
+      position: relative; transition: all 0.3s;
+      text-align: center;
+    }
+    .price-card:hover { transform: translateY(-8px); }
+    .price-card.featured {
+      border-color: var(--rose);
+      background: linear-gradient(160deg, #221A28, #1A1226);
+      box-shadow: 0 20px 60px rgba(200,80,106,0.2);
+    }
+    .price-card.featured::before {
+      content: '⭐ Más popular';
+      position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
+      background: linear-gradient(135deg, var(--rose), var(--rose-dark));
+      color: var(--white); font-size: 0.68rem; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 0.3rem 1rem; border-radius: 100px;
+      white-space: nowrap;
+    }
+
+    .price-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem; font-weight: 700;
+      color: var(--cream); margin-bottom: 1rem;
+    }
+    .price-amount {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 3.5rem; font-weight: 700;
+      color: var(--gold); line-height: 1;
+    }
+    .price-period {
+      font-size: 0.8rem; color: var(--muted); margin-bottom: 1.5rem;
+    }
+
+    .price-features {
+      list-style: none; margin: 1.5rem 0; text-align: left;
+    }
+    .price-features li {
+      display: flex; gap: 0.6rem;
+      font-size: 0.84rem; color: var(--muted);
+      padding: 0.5rem 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+      align-items: flex-start;
+    }
+    .price-features li .check { color: var(--rose-light); flex-shrink: 0; }
+
+    /* ── INSTRUCTOR ──────────────────────────────── */
+    #instructora {
+      background: var(--black);
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 5rem; align-items: center;
+    }
+
+    /* ── VIDEO ────────────────────────────────────── */
+    .video-container {
+      position: relative;
+      max-width: 860px; margin: 0 6%;
+      aspect-ratio: 10/9;
+      background: var(--surface);
+      overflow: hidden;
+      border-radius: 20px;
+      box-shadow: 0 40px 100px rgba(200,80,106,0.2);
+    }
+    @media (max-width: 650px) {
+      .video-container { border-radius: 12px; margin: 0 4%; }
+    }
+    .video-overlay {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 1rem; cursor: pointer;
+      background: linear-gradient(160deg, rgba(18,16,26,0.7), rgba(200,80,106,0.3));
+      transition: opacity 0.4s;
+    }
+    .video-overlay.hidden { opacity: 0; pointer-events: none; }
+    .play-btn {
+      width: 72px; height: 72px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--rose), var(--rose-dark));
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 8px 40px rgba(200,80,106,0.6);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .video-overlay:hover .play-btn { transform: scale(1.1); box-shadow: 0 12px 50px rgba(200,80,106,0.8); }
+    .video-label { color: var(--cream); font-size: 0.85rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; }
+
+    .instructor-visual {
+      position: relative;
+    }
+    .instructor-frame {
+      width: 100%; aspect-ratio: 3/4; border-radius: 24px;
+      overflow: hidden; position: relative;
+      background: linear-gradient(160deg, #2D1040, #4A0A30, #1A0828);
+    }
+    .instructor-art {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: 1rem;
+    }
+    .instructor-art-icon { font-size: 6rem; opacity: 0.5; }
+    .instructor-art-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem; font-style: italic;
+      color: rgba(250,244,238,0.25); text-align: center; padding: 0 2rem;
+    }
+    .instructor-glow {
+      position: absolute; bottom: 0; left: 0; right: 0; height: 200px;
+      background: linear-gradient(to top, rgba(200,80,106,0.3), transparent);
+    }
+
+    .cert-badge {
+      position: absolute; top: -1rem; right: -1rem;
+      background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+      color: var(--black); border-radius: 50%;
+      width: 110px; height: 110px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center; font-weight: 700;
+      box-shadow: 0 10px 30px rgba(212,169,106,0.4);
+    }
+    .cert-badge .cert-icon { font-size: 1.4rem; }
+    .cert-badge .cert-text { font-size: 0.58rem; letter-spacing: 0.05em; text-transform: uppercase; line-height: 1.3; margin-top: 0.2rem; }
+
+    .instructor-text .section-title { color: var(--cream); }
+    .instructor-desc {
+      color: var(--muted); font-size: 0.95rem; line-height: 1.8;
+      margin-bottom: 1rem;
+    }
+
+    .skills-row {
+      display: flex; flex-wrap: wrap; gap: 0.6rem; margin: 1.5rem 0 2rem;
+    }
+    .skill-tag {
+      background: var(--surface2); border: 1px solid rgba(200,80,106,0.25);
+      color: var(--lav-light); font-size: 0.75rem; font-weight: 500;
+      padding: 0.35rem 0.85rem; border-radius: 100px;
+      transition: all 0.2s;
+    }
+    .skill-tag:hover {
+      background: rgba(200,80,106,0.15); border-color: var(--rose);
+      color: var(--rose-light);
+    }
+
+    /* ── TESTIMONIOS ─────────────────────────────── */
+    #testimonios { background: var(--deep); overflow: hidden; }
+
+    .testimonios-track-wrap { overflow: hidden; margin-top: 3rem; }
+    .testimonios-track {
+      display: flex; gap: 1.5rem;
+      animation: trackScroll 30s linear infinite;
+      width: max-content;
+    }
+    .testimonios-track:hover { animation-play-state: paused; }
+    @keyframes trackScroll {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+
+    .testi-card {
+      background: var(--surface);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 16px; padding: 2rem;
+      width: 320px; flex-shrink: 0;
+    }
+    .testi-stars { color: var(--gold); font-size: 0.85rem; margin-bottom: 1rem; }
+    .testi-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic; font-size: 1.05rem;
+      color: var(--cream); line-height: 1.65; margin-bottom: 1.25rem;
+    }
+    .testi-author {
+      display: flex; align-items: center; gap: 0.75rem;
+    }
+    .testi-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.85rem; font-weight: 700; color: var(--white);
+      flex-shrink: 0;
+    }
+    .testi-name { font-size: 0.85rem; font-weight: 600; color: var(--cream); }
+    .testi-since { font-size: 0.72rem; color: var(--muted); }
+
+    /* ── FAQ ─────────────────────────────────────── */
+    #faq { background: var(--black); }
+
+    .faq-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 1rem; margin-top: 3rem;
+    }
+    .faq-item {
+      background: var(--surface);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 12px; overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    .faq-item.open { border-color: rgba(200,80,106,0.3); }
+
+    .faq-q {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1.25rem 1.5rem; cursor: pointer;
+      font-size: 0.9rem; font-weight: 500; color: var(--cream);
+      gap: 1rem;
+    }
+    .faq-icon {
+      width: 24px; height: 24px; border-radius: 50%;
+      background: rgba(200,80,106,0.15); color: var(--rose-light);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; flex-shrink: 0;
+      transition: transform 0.3s, background 0.2s;
+    }
+    .faq-item.open .faq-icon { transform: rotate(45deg); background: var(--rose); color: white; }
+
+    .faq-a {
+      max-height: 0; overflow: hidden;
+      transition: max-height 0.35s ease, padding 0.3s;
+      font-size: 0.84rem; color: var(--muted); line-height: 1.7;
+      padding: 0 1.5rem;
+    }
+    .faq-item.open .faq-a { max-height: 200px; padding: 0 1.5rem 1.25rem; }
+
+    /* ── CONTACTO ─────────────────────────────────── */
+    #contacto {
+      background: var(--deep);
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 5rem; align-items: start;
+    }
+
+    .contact-left .section-title { color: var(--cream); }
+
+    .contact-methods { margin-top: 2.5rem; display: flex; flex-direction: column; gap: 1rem; }
+    .contact-method {
+      display: flex; align-items: center; gap: 1rem;
+      padding: 1.25rem 1.5rem;
+      background: var(--surface);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 14px; text-decoration: none;
+      transition: all 0.25s;
+    }
+    .contact-method:hover {
+      border-color: rgba(200,80,106,0.4);
+      transform: translateX(6px);
+    }
+    .method-icon {
+      width: 48px; height: 48px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; flex-shrink: 0;
+    }
+    .method-icon.rose { background: rgba(200,80,106,0.15); }
+    .method-icon.green { background: rgba(37,211,102,0.12); }
+    .method-icon.insta { background: rgba(225,48,108,0.12); }
+    .method-label { font-size: 0.72rem; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.2rem; }
+    .method-value { font-size: 0.92rem; font-weight: 500; color: var(--cream); }
+
+    /* Form */
+    .contact-form {
+      background: var(--surface);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 20px; padding: 2.5rem;
+    }
+    .form-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.8rem; font-weight: 700;
+      color: var(--cream); margin-bottom: 0.4rem;
+    }
+    .form-subtitle { font-size: 0.83rem; color: var(--muted); margin-bottom: 2rem; }
+
+    .form-group { margin-bottom: 1rem; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+    .form-group label {
+      display: block; font-size: 0.72rem; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 0.4rem;
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%; padding: 0.75rem 1rem;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px; color: var(--cream);
+      font-family: 'Outfit', sans-serif; font-size: 0.88rem;
+      transition: border-color 0.2s; outline: none;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: var(--rose);
+      background: rgba(200,80,106,0.05);
+    }
+    .form-group textarea { resize: none; height: 90px; }
+    .form-group select option { background: var(--surface2); }
+
+    /* ── MODAL ───────────────────────────────────── */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(10,10,15,0.9);
+      backdrop-filter: blur(12px);
+      display: none; align-items: center; justify-content: center; padding: 1rem;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--surface);
+      border: 1px solid rgba(200,80,106,0.25);
+      border-radius: 20px; padding: 3rem;
+      max-width: 500px; width: 100%;
+      position: relative;
+      animation: modalPop 0.35s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+    @keyframes modalPop {
+      from { opacity: 0; transform: scale(0.85); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .modal-close {
+      position: absolute; top: 1.2rem; right: 1.2rem;
+      width: 34px; height: 34px; border-radius: 50%;
+      background: rgba(255,255,255,0.06); border: none;
+      color: var(--muted); cursor: pointer; font-size: 1rem;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s;
+    }
+    .modal-close:hover { background: var(--rose); color: white; }
+    .modal-icon { font-size: 3rem; margin-bottom: 1rem; text-align: center; display: block; }
+    .modal h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem; font-weight: 700; text-align: center;
+      color: var(--cream); margin-bottom: 0.5rem;
+    }
+    .modal p { font-size: 0.88rem; color: var(--muted); text-align: center; margin-bottom: 2rem; }
+
+    /* ── TOAST ───────────────────────────────────── */
+    .toast {
+      position: fixed; bottom: 2rem; right: 2rem; z-index: 300;
+      background: linear-gradient(135deg, var(--rose-dark), #3D0A28);
+      border: 1px solid rgba(200,80,106,0.4);
+      color: var(--cream); padding: 0.9rem 1.5rem;
+      border-radius: 12px; font-size: 0.85rem;
+      box-shadow: 0 10px 40px rgba(200,80,106,0.3);
+      display: none; align-items: center; gap: 0.6rem;
+      max-width: 340px;
+    }
+    .toast.show { display: flex; animation: toastSlide 0.35s ease both; }
+    @keyframes toastSlide {
+      from { opacity: 0; transform: translateX(40px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    /* ── FOOTER ──────────────────────────────────── */
+    footer {
+      background: #060508;
+      padding: 3rem 6% 2rem;
+      border-top: 1px solid rgba(212,169,106,0.12);
+    }
+    .footer-top {
+      display: flex; justify-content: space-between;
+      align-items: flex-start; flex-wrap: wrap; gap: 2rem;
+      margin-bottom: 2.5rem;
+    }
+    .footer-brand .footer-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.8rem; font-weight: 700; color: var(--cream);
+    }
+    .footer-brand .footer-logo span { color: var(--rose); font-style: italic; }
+    .footer-brand p { font-size: 0.82rem; color: var(--muted); margin-top: 0.5rem; max-width: 220px; line-height: 1.6; }
+
+    .footer-links-group { display: flex; gap: 3rem; flex-wrap: wrap; }
+    .footer-col h4 {
+      font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--gold); font-weight: 600; margin-bottom: 1rem;
+    }
+    .footer-col a {
+      display: block; color: var(--muted); text-decoration: none;
+      font-size: 0.83rem; margin-bottom: 0.55rem; transition: color 0.2s;
+    }
+    .footer-col a:hover { color: var(--cream); }
+
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,0.05);
+      padding-top: 1.5rem;
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 1rem;
+    }
+    .footer-copy { font-size: 0.75rem; color: rgba(138,130,152,0.5); }
+
+    /* ── RESPONSIVE ──────────────────────────────── */
+    @media (max-width: 900px) {
+      #hero { grid-template-columns: 1fr; min-height: auto; }
+      .hero-left { padding: 9rem 6% 4rem; }
+      .hero-right { height: 400px; }
+      #instructora { grid-template-columns: 1fr; gap: 3rem; }
+      .instructor-frame { max-width: 380px; margin: 0 auto; }
+      #contacto { grid-template-columns: 1fr; gap: 3rem; }
+      .faq-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 650px) {
+      nav { padding: 0 5%; }
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      section { padding: 4rem 5%; }
+      .hero-left { padding: 8rem 5% 3rem; }
+      .form-row { grid-template-columns: 1fr; }
+      .footer-top { flex-direction: column; }
+      .cursor, .cursor-ring { display: none; }
+    }
+
+    /* Appear animation */
+    .appear { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .appear.visible { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body>
+
+<!-- Cursor -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- ── NAV ──────────────────────────────────────── -->
+<nav id="navbar">
+  <a href="#hero" class="nav-logo">Pole<span>Artistry</span></a>
+  <ul class="nav-links">
+    <li><a href="#beneficios">Beneficios</a></li>
+    <li><a href="#clases">Clases</a></li>
+    <li><a href="#precios">Precios</a></li>
+    <li><a href="#instructora">Instructora</a></li>
+    <li><a href="#contacto">Contacto</a></li>
+    <li><a href="#" class="nav-cta" onclick="openModal();return false;">Clase de prueba</a></li>
+  </ul>
+  <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#beneficios" onclick="closeMenu()">Beneficios</a>
+  <a href="#clases" onclick="closeMenu()">Clases</a>
+  <a href="#precios" onclick="closeMenu()">Precios</a>
+  <a href="#instructora" onclick="closeMenu()">Instructora</a>
+  <a href="#contacto" onclick="closeMenu()">Contacto</a>
+  <a href="#" onclick="openModal();closeMenu();return false;" style="color:var(--rose-light)">✨ Clase de prueba gratuita</a>
+</div>
+
+<!-- ── HERO ──────────────────────────────────────── -->
+<section id="hero">
+  <div class="hero-left">
+    <div class="hero-eyebrow">Instructora certificada · Puebla, México</div>
+    <h1 class="hero-title">
+      Descubre tu<br>
+      <em>fuerza</em>
+      <span class="outline">y arte</span>
+    </h1>
+    <p class="hero-desc">El pole dance es mucho más que un deporte — es una forma de expresión, empoderamiento y transformación. Aquí aprenderás a tu ritmo, en un espacio seguro y sin juicios.</p>
+    <div class="hero-buttons">
+      <a href="#" class="btn btn-rose" onclick="openModal();return false;">✨ Clase de prueba gratis</a>
+      <a href="#clases" class="btn btn-ghost">Ver clases</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-num">100%</div>
+        <div class="stat-label">Ambiente seguro</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">Cert.</div>
+        <div class="stat-label">Instructora oficial</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">Todos</div>
+        <div class="stat-label">Niveles bienvenidos</div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-visual">
+      <div class="orb orb-1"></div>
+      <div class="orb orb-2"></div>
+      <div class="orb orb-3"></div>
+    </div>
+    <div class="hero-img-wrap">
+      <img src="Ilustracion.png" alt="Pole dance – ilustración artística" class="hero-illustration"/>
+      <div class="hero-img-credit"></div>
+    </div>
+  </div>
+  <div class="hero-scroll-hint">
+    <div class="scroll-dot"></div>
+    Explorar
+  </div>
+</section>
+
+<!-- ── BENEFICIOS ─────────────────────────────────── -->
+<section id="beneficios">
+  <div class="benefits-intro appear">
+    <div class="section-label">¿Por qué practicarlo?</div>
+    <h2 class="section-title">El pole dance <em>transforma</em> cuerpo y mente</h2>
+    <p>Estudios y atletas de todo el mundo coinciden: esta disciplina va mucho más allá de la estética. Es un entrenamiento completo con beneficios comprobados.</p>
+  </div>
+  <div class="benefits-grid">
+    <div class="benefit-card appear">
+      <span class="benefit-icon benefit-icon-img">
+      <img src="1.svg" alt="Fuerza muscular" /></span>
+      <div class="benefit-title">Fuerza muscular real</div>
+      <div class="benefit-desc">Sostienes tu propio peso corporal en cada movimiento. Desarrolla core, espalda, brazos y piernas más efectivamente que muchos gimnasios convencionales.</div>
+    </div>
+    <div class="benefit-card appear">
+      <span class="benefit-icon benefit-icon-img">
+      <img src="2.svg" alt="Fuerza muscular" /></span>
+      <div class="benefit-title">Flexibilidad y movilidad</div>
+      <div class="benefit-desc">Comparada con la gimnasia y el yoga, la práctica constante de pole dance aumenta notablemente el rango de movimiento articular de todo el cuerpo.</div>
+    </div>
+    <div class="benefit-card appear">
+      <span class="benefit-icon benefit-icon-img">
+      <img src="3.svg" alt="Fuerza muscular" /></span>
+      <div class="benefit-title">Cardio y resistencia</div>
+      <div class="benefit-desc">Una clase activa quema entre 250 y 400 calorías. Mejora tu resistencia cardiovascular de forma dinámica y divertida, sin sentirlo como ejercicio.</div>
+    </div>
+    <div class="benefit-card appear">
+      <span class="benefit-icon benefit-icon-img">
+      <img src="4.svg" alt="Fuerza muscular" /></span>
+      <div class="benefit-title">Bienestar mental</div>
+      <div class="benefit-desc">Estudios reportan mejora significativa en autoestima, confianza corporal y reducción de ansiedad en practicantes regulares. El movimiento libera, literalmente.</div>
+    </div>
+    <div class="benefit-card appear">
+      <span class="benefit-icon benefit-icon-img">
+      <img src="5.svg" alt="Fuerza muscular" /></span>
+      <div class="benefit-title">Expresión artística</div>
+      <div class="benefit-desc">Es un lenguaje corporal. Aprenderás a conectar emoción con movimiento, desarrollando una forma de expresión única que es tuya y de nadie más.</div>
+    </div>
+    <div class="benefit-card appear">
+      <span class="benefit-icon benefit-icon-img">
+      <img src="6.svg" alt="Fuerza muscular" /></span>
+      <div class="benefit-title">Comunidad y apoyo</div>
+      <div class="benefit-desc">La comunidad de pole dance es conocida mundialmente por ser inclusiva, amorosa y empoderada. Aquí todas se apoyan, sin importar el nivel ni la complexión.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── VIDEO DEMO ──────────────────────────────────────── -->
+<section id="video-demo" style="background:var(--black);padding:5rem 0;text-align:center;">
+  <div style="padding:0 6%;max-width:700px;margin:0 auto 2.5rem;" class="appear">
+    <div class="section-label" style="justify-content:center;">En acción</div>
+    <h2 class="section-title">Mira cómo se <em>siente</em></h2>
+    <p style="color:var(--muted);font-size:0.95rem;line-height:1.75;">Esto no es un video de producción — es una clase real, en un estudio real. Así se ve el trabajo, la dedicación y el arte.</p>
+  </div>
+  <div class="video-container appear">
+    <video
+      src="demo.mp4"
+      controls
+      playsinline
+      preload="metadata"
+      poster=""
+      style="width:100%;height:100%;object-fit:cover;border-radius:0;"
+    ></video>
+    <div class="video-overlay" id="videoOverlay" onclick="playVideo()">
+      <div class="play-btn">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>
+      </div>
+      <p class="video-label">Ver demostración real</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── CLASES ──────────────────────────────────────── -->
+<section id="clases">
+  <div class="clases-header">
+    <div class="appear">
+      <div class="section-label">Lo que ofrezco</div>
+      <h2 class="section-title">Clases para <em>cada nivel</em></h2>
+    </div>
+    <a href="#contacto" class="btn btn-ghost appear">Ver horarios →</a>
+  </div>
+  <div class="clases-grid">
+
+    <div class="clase-card appear">
+      <div class="clase-visual beginner">
+        <img src="imagen1.png" alt="Pole para principiantes"
+       style="width:100%; height:100%; object-fit:cover; display:block;">
+        <span class="clase-level level-inicio">Nivel inicial</span>
+      </div>
+      <div class="clase-body">
+        <div class="clase-name">Pole para Principiantes</div>
+        <div class="clase-desc">El punto de partida perfecto. Aprenderás agarre, seguridad, primeras figuras básicas y ganarás confianza en el tubo desde el primer día.</div>
+        <div class="clase-meta">
+          <span class="meta-chip">⏱ 60 min</span>
+          <span class="meta-chip">👥 Grupos pequeños</span>
+          <span class="meta-chip">🔰 Sin experiencia</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="clase-card appear">
+      <div class="clase-visual intermediate">
+        <img src="imagen2.png" alt="Pole intermedio"
+       style="width:100%; height:100%; object-fit:cover; display:block;">
+        <span class="clase-level level-inicio">Nivel intermedio</span>
+      </div>
+      <div class="clase-body">
+        <div class="clase-name">Pole Intermedio</div>
+        <div class="clase-desc">Para quienes ya tienen las bases. Trabajamos combinaciones, inversiones, trabajo de piso y comienzas a crear tu propio estilo de movimiento.</div>
+        <div class="clase-meta">
+          <span class="meta-chip">⏱ 75 min</span>
+          <span class="meta-chip">👥 Grupos reducidos</span>
+          <span class="meta-chip">📋 Prev. básicos</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="clase-card appear">
+      <div class="clase-visual advanced">
+        <img src="imagen3.png" alt="Pole avanzado"
+       style="width:100%; height:100%; object-fit:cover; display:block;">
+        <span class="clase-level level-inicio">Nivel avanzado</span>
+      </div>
+      <div class="clase-body">
+        <div class="clase-name">Pole Avanzado</div>
+        <div class="clase-desc">Figuras complejas, trabajo aéreo, fluidez y coreografías completas. Para quienes buscan el siguiente nivel de su práctica artística y atlética.</div>
+        <div class="clase-meta">
+          <span class="meta-chip">⏱ 90 min</span>
+          <span class="meta-chip">👤 Semi-privado</span>
+          <span class="meta-chip">🎓 Certificable</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="clase-card appear">
+      <div class="clase-visual fitness">
+        <img src="imagen4.png" alt="Pole Fitness"
+       style="width:100%; height:100%; object-fit:cover; display:block;">
+        <span class="clase-level level-inicio">Fitness</span>
+      </div>
+      <div class="clase-body">
+        <div class="clase-name">Pole Fitness</div>
+        <div class="clase-desc">Enfocada en el aspecto físico y tonificación. Ideal si buscas quemar calorías, ganar fuerza y mejorar tu cuerpo usando el tubo como herramienta.</div>
+        <div class="clase-meta">
+          <span class="meta-chip">⏱ 60 min</span>
+          <span class="meta-chip">👥 Todos los niveles</span>
+          <span class="meta-chip">💪 Alta intensidad</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="clase-card appear">
+      <div class="clase-visual artistic">
+        <img src="imagen5.png" alt="Pole Artístico"
+       style="width:100%; height:100%; object-fit:cover; display:block;">
+        <span class="clase-level level-inicio">Artístico</span>
+      </div>
+      <div class="clase-body">
+        <div class="clase-name">Pole Artístico y Coreografía</div>
+        <div class="clase-desc">Creamos juntas tu historia. Conectamos emoción, música y movimiento para desarrollar una coreografía personal que cuente quién eres.</div>
+        <div class="clase-meta">
+          <span class="meta-chip">⏱ 90 min</span>
+          <span class="meta-chip">👤 Privado</span>
+          <span class="meta-chip">🎵 Música propia</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── PRECIOS ─────────────────────────────────────── -->
+<section id="precios">
+  <div class="appear">
+    <div class="section-label">Inversión</div>
+    <h2 class="section-title">Planes <em>flexibles</em> para ti</h2>
+  </div>
+  <div class="pricing-grid">
+
+    <div class="price-card appear">
+      <div class="price-name">Clase Individual</div>
+      <div class="price-amount">$200</div>
+      <div class="price-period">por clase · Sin compromiso</div>
+      <ul class="price-features">
+        <li><span class="check">✦</span> 1 clase de tu elección</li>
+        <li><span class="check">✦</span> Todos los niveles</li>
+        <li><span class="check">✦</span> Equipo incluido</li>
+        <li><span class="check">✦</span> Válido 30 días</li>
+      </ul>
+      <button class="btn btn-ghost" style="width:100%;justify-content:center;" onclick="openModal()">Reservar</button>
+    </div>
+
+    <div class="price-card featured appear">
+      <div class="price-name">Mensualidad</div>
+      <div class="price-amount">$650</div>
+      <div class="price-period">al mes · 8 clases incluidas</div>
+      <ul class="price-features">
+        <li><span class="check">✦</span> 8 clases mensuales</li>
+        <li><span class="check">✦</span> Acceso a todos los niveles</li>
+        <li><span class="check">✦</span> Seguimiento personalizado</li>
+        <li><span class="check">✦</span> Videos de práctica en casa</li>
+        <li><span class="check">✦</span> Comunidad privada WhatsApp</li>
+      </ul>
+      <button class="btn btn-rose" style="width:100%;justify-content:center;" onclick="openModal()">Comenzar ahora</button>
+    </div>
+
+    <div class="price-card appear">
+      <div class="price-name">Clase Privada</div>
+      <div class="price-amount">$400</div>
+      <div class="price-period">por sesión · 1 a 1 con instructora</div>
+      <ul class="price-features">
+        <li><span class="check">✦</span> Atención 100% personalizada</li>
+        <li><span class="check">✦</span> Horario flexible</li>
+        <li><span class="check">✦</span> Avance acelerado</li>
+        <li><span class="check">✦</span> Coreografías propias</li>
+      </ul>
+      <button class="btn btn-gold" style="width:100%;justify-content:center;" onclick="openModal()">Agendar sesión</button>
+    </div>
+
+  </div>
+  <p style="text-align:center;color:var(--muted);font-size:0.82rem;margin-top:2rem;">
+    ¿Tienes dudas sobre qué plan elegir? <a href="#contacto" style="color:var(--rose-light);text-decoration:none;">Escríbeme</a> y te asesoro sin costo.
+  </p>
+</section>
+
+<!-- ── INSTRUCTORA ─────────────────────────────────── -->
+<section id="instructora">
+  <div class="instructor-visual appear">
+    <div class="instructor-frame">
+      <img src="estudio.jpeg" alt="Instructora en el estudio de pole dance" style="width:100%;height:100%;object-fit:cover;object-position:center top;border-radius:24px;"/>
+      <div class="instructor-glow"></div>
+    </div>
+    <div class="cert-badge">
+      <span class="cert-icon">🎓</span>
+      <span class="cert-text">Instructora<br>Certificada<br>Oficial</span>
+    </div>
+  </div>
+  <div class="instructor-text appear">
+    <div class="section-label">Tu instructora</div>
+    <h2 class="section-title" style="color:var(--cream);">Pasión que se <em>convierte</em> en guía</h2>
+    <p class="instructor-desc">Hola, soy [Nombre] — instructora certificada de pole dance con pasión genuina por esta disciplina que va mucho más allá de lo que la gente imagina.</p>
+    <p class="instructor-desc">Comencé como estudiante y me enamoré de la combinación de fuerza, arte y libertad que el pole ofrece. Hoy, con mi certificación oficial en mano, quiero compartir ese mismo despertar contigo, sin importar tu condición física ni tu experiencia previa.</p>
+    <p class="instructor-desc">Mi filosofía: cada cuerpo es capaz, cada persona tiene su propio ritmo, y aquí todas somos bienvenidas tal como somos.</p>
+    <div class="skills-row">
+      <span class="skill-tag">Pole Fitness</span>
+      <span class="skill-tag">Pole Artístico</span>
+      <span class="skill-tag">Coreografía</span>
+      <span class="skill-tag">Trabajo aéreo</span>
+      <span class="skill-tag">Flexibilidad</span>
+      <span class="skill-tag">Pole Kids</span>
+    </div>
+    <a href="#" class="btn btn-rose" onclick="openModal();return false;">Agenda tu clase de prueba</a>
+  </div>
+</section>
+
+<!-- ── TESTIMONIOS ─────────────────────────────────── -->
+<section id="testimonios">
+  <div class="appear" style="text-align:center;max-width:500px;margin:0 auto 1rem">
+    <div class="section-label" style="justify-content:center">Voces reales</div>
+    <h2 class="section-title">Lo que dicen mis <em>alumnas</em></h2>
+  </div>
+  <div class="testimonios-track-wrap">
+    <div class="testimonios-track">
+      <!-- First set -->
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-text">"Llegué sin poder hacer una lagartija y en dos meses ya hacía figuras invertidas. La instructora es increíblemente paciente."</div>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:var(--rose)">M</div>
+          <div><div class="testi-name">Mariana R.</div><div class="testi-since">Alumna desde hace 3 meses</div></div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-text">"Tenía muchos prejuicios antes de entrar. Ahora entiendo que es un deporte serio y una de las mejores decisiones de mi vida."</div>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:var(--lavender)">L</div>
+          <div><div class="testi-name">Lucía P.</div><div class="testi-since">Alumna desde hace 6 meses</div></div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-text">"El ambiente que crea es mágico. Nunca me sentí juzgada ni comparada. Cada clase es un reto y una celebración al mismo tiempo."</div>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:var(--gold-dim)">S</div>
+          <div><div class="testi-name">Sofía G.</div><div class="testi-since">Alumna nivel intermedio</div></div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-text">"Mi hija tiene 9 años y está enamorada de sus clases. Es increíble ver cómo ha ganado fuerza, coordinación y sobre todo confianza en sí misma."</div>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:#2D5016)">K</div>
+          <div><div class="testi-name">Karen T.</div><div class="testi-since">Mamá de alumna</div></div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-text">"Llevo años haciendo gym y nada me había dado los resultados que dos meses de pole. Brazos, core, todo cambió. Además es DIVERTIDÍSIMO."</div>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:#9A3050">A</div>
+          <div><div class="testi-name">Andrea M.</div><div class="testi-since">Alumna nivel avanzado</div></div>
+        </div>
+      </div>
+      <!-- Duplicate for infinite scroll -->
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-text">"Llegué sin poder hacer una lagartija y en dos meses ya hacía figuras invertidas. La instructora es increíblemente paciente."</div>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:var(--rose)">M</div>
+          <div><div class="testi-name">Mariana R.</div><div class="testi-since">Alumna desde hace 3 meses</div></div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-text">"Tenía muchos prejuicios antes de entrar. Ahora entiendo que es un deporte serio y una de las mejores decisiones de mi vida."</div>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:var(--lavender)">L</div>
+          <div><div class="testi-name">Lucía P.</div><div class="testi-since">Alumna desde hace 6 meses</div></div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-text">"El ambiente que crea es mágico. Nunca me sentí juzgada ni comparada. Cada clase es un reto y una celebración al mismo tiempo."</div>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:var(--gold-dim)">S</div>
+          <div><div class="testi-name">Sofía G.</div><div class="testi-since">Alumna nivel intermedio</div></div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-text">"Mi hija tiene 9 años y está enamorada de sus clases. Es increíble ver cómo ha ganado fuerza, coordinación y sobre todo confianza en sí misma."</div>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:#2D5016">K</div>
+          <div><div class="testi-name">Karen T.</div><div class="testi-since">Mamá de alumna</div></div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-text">"Llevo años haciendo gym y nada me había dado los resultados que dos meses de pole. Brazos, core, todo cambió. Además es DIVERTIDÍSIMO."</div>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:#9A3050">A</div>
+          <div><div class="testi-name">Andrea M.</div><div class="testi-since">Alumna nivel avanzado</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FAQ ─────────────────────────────────────────── -->
+<section id="faq">
+  <div class="appear" style="max-width:560px">
+    <div class="section-label">Preguntas frecuentes</div>
+    <h2 class="section-title">Lo que todos <em>preguntan</em></h2>
+  </div>
+  <div class="faq-grid appear">
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        ¿Necesito tener fuerza o experiencia previa?
+        <span class="faq-icon">+</span>
+      </div>
+      <div class="faq-a">Para nada. Las clases de principiantes están diseñadas específicamente para personas sin ninguna experiencia. Irás ganando fuerza progresivamente con la práctica.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        ¿Es apropiado para todas las edades y cuerpos?
+        <span class="faq-icon">+</span>
+      </div>
+      <div class="faq-a">Absolutamente. El pole dance es inclusivo por naturaleza. Tenemos clases para niñas desde 6 años y adultas de cualquier edad, talla o condición física.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        ¿Qué ropa debo usar?
+        <span class="faq-icon">+</span>
+      </div>
+      <div class="faq-a">Ropa deportiva cómoda para comenzar. Para avanzar, se recomienda shorts y top corto ya que la piel ayuda al agarre. Nada de cremas o aceites el día de la clase.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        ¿Es peligroso? ¿Puedo lastimarme?
+        <span class="faq-icon">+</span>
+      </div>
+      <div class="faq-a">Con una instructora certificada el riesgo es mínimo. Cada figura se aprende de forma progresiva con las medidas de seguridad adecuadas. La seguridad es la prioridad.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        ¿Cuántas clases por semana recomiendas?
+        <span class="faq-icon">+</span>
+      </div>
+      <div class="faq-a">Para principiantes, 2 veces por semana es ideal para ver avances y permitir que el cuerpo se adapte. Puedes ir aumentando según tu progreso y disponibilidad.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        ¿Se puede practicar durante el ciclo menstrual?
+        <span class="faq-icon">+</span>
+      </div>
+      <div class="faq-a">Depende de cómo te sientas. En los primeros días es mejor descansar o hacer trabajo de suelo suave. Tú decides siempre qué es mejor para tu cuerpo.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CONTACTO ─────────────────────────────────────── -->
+<section id="contacto">
+  <div class="contact-left appear">
+    <div class="section-label">Hablemos</div>
+    <h2 class="section-title" style="color:var(--cream);">¿Lista para <em>comenzar</em>?</h2>
+    <p style="color:var(--muted);font-size:0.95rem;line-height:1.75;margin-bottom:2rem;">No necesitas experiencia, ni cuerpo "perfecto", ni nada más que las ganas. Contáctame y resolvemos todas tus dudas.</p>
+    <div class="contact-methods">
+      <a href="tel:+522764731375" class="contact-method">
+        <div class="method-icon rose">
+          <img src="llamada-telefonica.svg" width="22" height="22">
+        </div>
+        <div>
+          <div class="method-label">Teléfono / WhatsApp</div>
+          <div class="method-value">(276) 473-XXXX</div>
+        </div>
+      </a>
+      <a href="https://wa.me/521234567890" target="_blank" class="contact-method">
+        <div class="method-icon green">
+          <img src="whatsapp.svg" width="22" height="22">
+        </div>
+        <div>
+          <div class="method-label">WhatsApp directo</div>
+          <div class="method-value">Escríbeme aquí →</div>
+        </div>
+      </a>
+      <a href="https://instagram.com" target="_blank" class="contact-method">
+        <div class="method-icon insta">
+          <img src="instagram.svg" width="22" height="22">
+        </div>
+        <div>
+          <div class="method-label">Instagram</div>
+          <div class="method-value">@tu.usuario.pole</div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <div class="contact-form appear">
+    <div class="form-title">Agenda tu clase</div>
+    <div class="form-subtitle">Primera clase de prueba completamente gratis. Sin compromisos.</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Tu nombre</label>
+        <input type="text" placeholder="¿Cómo te llamas?"/>
+      </div>
+      <div class="form-group">
+        <label>WhatsApp</label>
+        <input type="tel" placeholder="Tu número"/>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>¿Qué clase te interesa?</label>
+      <select>
+        <option value="">Selecciona una opción…</option>
+        <option>Pole para Principiantes</option>
+        <option>Pole Intermedio</option>
+        <option>Pole Avanzado</option>
+        <option>Pole Fitness</option>
+        <option>Pole Artístico / Coreografía</option>
+        <option>Clase Privada 1:1</option>
+        <option>No sé, ¡necesito orientación!</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>¿Cuándo prefieres?</label>
+      <input type="date"/>
+    </div>
+    <div class="form-group">
+      <label>Cuéntame algo (opcional)</label>
+      <textarea placeholder="¿Tienes alguna duda, condición física especial o algo que quieras compartir?"></textarea>
+    </div>
+    <button class="btn btn-rose" style="width:100%;justify-content:center;font-size:0.9rem;" onclick="submitForm()">
+      ✨ Solicitar clase de prueba gratis
+    </button>
+  </div>
+</section>
+
+<!-- ── FOOTER ───────────────────────────────────────── -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <div class="footer-logo">Pole<span>Artistry</span></div>
+      <p>Fuerza, arte y empoderamiento en cada clase. Bienvenida sin importar tu punto de partida.</p>
+    </div>
+    <div class="footer-links-group">
+      <div class="footer-col">
+        <h4>Clases</h4>
+        <a href="#clases">Principiantes</a>
+        <a href="#clases">Intermedio</a>
+        <a href="#clases">Avanzado</a>
+        <a href="#clases">Pole Kids</a>
+      </div>
+      <div class="footer-col">
+        <h4>Info</h4>
+        <a href="#beneficios">Beneficios</a>
+        <a href="#precios">Precios</a>
+        <a href="#instructora">Instructora</a>
+        <a href="#faq">FAQ</a>
+      </div>
+      <div class="footer-col">
+        <h4>Contacto</h4>
+        <a href="#contacto">WhatsApp</a>
+        <a href="#contacto">Instagram</a>
+        <a href="#contacto">Agendar clase</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2026 PoleArtistry · Instructora Certificada · Puebla, México</div>
+    <div class="footer-copy">Hecho para personas que se atreven</div>
+  </div>
+</footer>
+
+<!-- ── MODAL ─────────────────────────────────────────── -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <span class="modal-icon">🎉</span>
+    <h3>¡Tu primera clase es gratis!</h3>
+    <p>Déjame tus datos y te contacto en menos de 24 horas para agendar tu clase de prueba sin costo.</p>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Nombre</label>
+        <input type="text" placeholder="Tu nombre"/>
+      </div>
+      <div class="form-group">
+        <label>WhatsApp</label>
+        <input type="tel" placeholder="Tu número"/>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>¿Qué clase te interesa?</label>
+      <select>
+        <option>Principiantes – quiero empezar</option>
+        <option>Pole Fitness – me interesa lo físico</option>
+        <option>Pole Kids – es para mi hija</option>
+        <option>No sé, necesito orientación</option>
+      </select>
+    </div>
+    <button class="btn btn-rose" style="width:100%;justify-content:center;" onclick="submitModal()">
+      Enviar solicitud 🚀
+    </button>
+  </div>
+</div>
+
+<!-- ── TOAST ─────────────────────────────────────────── -->
+<div class="toast" id="toast">
+  <span>🎊</span>
+  <span id="toastMsg">¡Mensaje enviado!</span>
+</div>
+
+<script>
+  // Video overlay
+  function playVideo(){
+    document.getElementById('videoOverlay').classList.add('hidden');
+    document.querySelector('#video-demo video').play();
+  }
+
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx=0, my=0, rx=0, ry=0;
+  document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; cursor.style.left=mx+'px'; cursor.style.top=my+'px'; });
+  (function animRing() { rx+=(mx-rx)*0.12; ry+=(my-ry)*0.12; ring.style.left=rx+'px'; ring.style.top=ry+'px'; requestAnimationFrame(animRing); })();
+  document.querySelectorAll('a,button,.clase-card,.benefit-card').forEach(el=>{
+    el.addEventListener('mouseenter',()=>{ cursor.style.width='18px'; cursor.style.height='18px'; ring.style.width='54px'; ring.style.height='54px'; });
+    el.addEventListener('mouseleave',()=>{ cursor.style.width='10px'; cursor.style.height='10px'; ring.style.width='36px'; ring.style.height='36px'; });
+  });
+
+  // Nav scroll
+  window.addEventListener('scroll', () => {
+    document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60);
+  });
+
+  // Mobile menu
+  function toggleMenu(){
+    document.getElementById('hamburger').classList.toggle('open');
+    document.getElementById('mobileMenu').classList.toggle('open');
+  }
+  function closeMenu(){
+    document.getElementById('hamburger').classList.remove('open');
+    document.getElementById('mobileMenu').classList.remove('open');
+  }
+
+  // Modal
+  function openModal(){ document.getElementById('modalOverlay').classList.add('open'); document.body.style.overflow='hidden'; }
+  function closeModal(){ document.getElementById('modalOverlay').classList.remove('open'); document.body.style.overflow=''; }
+  function closeModalOutside(e){ if(e.target===document.getElementById('modalOverlay')) closeModal(); }
+  function submitModal(){ closeModal(); showToast('🎊 ¡Listo! Te contactaré pronto para agendar tu clase gratuita.'); }
+  function submitForm(){ showToast('✨ ¡Solicitud enviada! En breve me comunico contigo.'); }
+
+  // Toast
+  function showToast(msg){
+    const t=document.getElementById('toast');
+    document.getElementById('toastMsg').textContent=msg;
+    t.classList.add('show');
+    setTimeout(()=>t.classList.remove('show'),4000);
+  }
+
+  // FAQ
+  function toggleFaq(el){
+    const item=el.parentElement;
+    const isOpen=item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('open'));
+    if(!isOpen) item.classList.add('open');
+  }
+
+  // Appear on scroll
+  const observer = new IntersectionObserver(entries=>{
+    entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); });
+  },{ threshold: 0.1 });
+  document.querySelectorAll('.appear').forEach(el=>observer.observe(el));
+
+  // Smooth scroll
+  document.querySelectorAll('a[href^="#"]').forEach(a=>{
+    a.addEventListener('click',e=>{
+      const id=a.getAttribute('href'); if(id==='#') return;
+      const el=document.querySelector(id); if(!el) return;
+      e.preventDefault(); el.scrollIntoView({behavior:'smooth',block:'start'});
+    });
+  });
+</script>
+</body>
+</html>
